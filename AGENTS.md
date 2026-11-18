@@ -28,3 +28,6 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+- Goal content lives in src/data/goals.ts; user progress/notes persist via zustand in localStorage (rehydrated in __root effect) — single-user app, no backend yet.
+- Completion % rules live in src/lib/progress.ts (front = KR average; overall weights P0 80% / P1+P2 20%) and are covered by progress.test.ts.

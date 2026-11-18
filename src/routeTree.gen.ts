@@ -10,33 +10,63 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as KpisRouteImport } from './routes/kpis'
+import { Route as MetasRouteImport } from './routes/metas'
+import { Route as RelatorioRouteImport } from './routes/relatorio'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KpisRoute = KpisRouteImport.update({
+  id: '/kpis',
+  path: '/kpis',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MetasRoute = MetasRouteImport.update({
+  id: '/metas',
+  path: '/metas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RelatorioRoute = RelatorioRouteImport.update({
+  id: '/relatorio',
+  path: '/relatorio',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/kpis': typeof KpisRoute
+  '/metas': typeof MetasRoute
+  '/relatorio': typeof RelatorioRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/kpis': typeof KpisRoute
+  '/metas': typeof MetasRoute
+  '/relatorio': typeof RelatorioRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/kpis': typeof KpisRoute
+  '/metas': typeof MetasRoute
+  '/relatorio': typeof RelatorioRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/kpis' | '/metas' | '/relatorio'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/kpis' | '/metas' | '/relatorio'
+  id: '__root__' | '/' | '/kpis' | '/metas' | '/relatorio'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  KpisRoute: typeof KpisRoute
+  MetasRoute: typeof MetasRoute
+  RelatorioRoute: typeof RelatorioRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +78,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/kpis': {
+      id: '/kpis'
+      path: '/kpis'
+      fullPath: '/kpis'
+      preLoaderRoute: typeof KpisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/metas': {
+      id: '/metas'
+      path: '/metas'
+      fullPath: '/metas'
+      preLoaderRoute: typeof MetasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/relatorio': {
+      id: '/relatorio'
+      path: '/relatorio'
+      fullPath: '/relatorio'
+      preLoaderRoute: typeof RelatorioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  KpisRoute: KpisRoute,
+  MetasRoute: MetasRoute,
+  RelatorioRoute: RelatorioRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
