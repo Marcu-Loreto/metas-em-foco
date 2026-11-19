@@ -86,7 +86,7 @@ function Dashboard() {
             <article key={f.id} className={cn(card, "flex flex-col gap-4")}>
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2"><PriorityTag p={f.priority} /><StatusPill pct={pct} /></div>
-                <span className="font-display text-2xl font-semibold">{pct}%</span>
+                <span className="text-right"><span className="block font-display text-2xl font-semibold">{pct}%</span><span className="text-[10px] text-muted-foreground">média dos KRs</span></span>
               </div>
               <div>
                 <Link to="/metas" hash={f.id} className="font-display text-lg font-semibold hover:underline">{f.name}</Link>
@@ -94,7 +94,7 @@ function Dashboard() {
               </div>
               <Bar pct={pct} />
               <div className="rounded-xl bg-muted p-3 text-sm">
-                <div className="flex justify-between"><span className="font-medium">KPI · {f.kpi.name}</span><b>{kpiPct}%</b></div>
+                <div className="flex justify-between"><span className="font-medium">KPI · {f.kpi.name} <span className="font-normal text-muted-foreground">(atingimento, à parte)</span></span><b>{kpiPct}%</b></div>
                 <div className="mt-1 text-xs text-muted-foreground">Meta: {f.kpi.target}</div>
                 <div className="mt-1 text-xs text-muted-foreground">{f.kpi.frequency} · {f.kpi.owner}</div>
                 <Slider className="mt-3" value={[kpiPct]} max={100} step={5} onValueChange={([v]) => setKpi(f.id, v ?? 0)} aria-label={`Atingimento do KPI ${f.kpi.name}`} />
