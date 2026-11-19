@@ -2,7 +2,7 @@ import type { Front } from "@/data/goals";
 import { frontPct, overallPct, groupPct, status, STATUS_LABEL } from "@/lib/progress";
 
 interface Data { fronts: Front[]; quarterLabel: string; range: { start: number; end: number }; kr: Record<string, number>; kpiValue: Record<string, number>; notes: Record<string, string>; summary: string }
-const LIME: [number, number, number] = [126, 147, 0];
+const LIME: [number, number, number] = [94, 128, 110];
 
 export async function buildReportPdf(d: Data): Promise<Blob> {
   const { jsPDF } = await import("jspdf");
