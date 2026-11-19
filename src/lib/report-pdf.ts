@@ -4,6 +4,14 @@ import { frontPct, overallPct, groupPct, status, STATUS_LABEL } from "@/lib/prog
 interface Data { fronts: Front[]; quarterLabel: string; range: { start: number; end: number }; kr: Record<string, number>; kpiValue: Record<string, number>; notes: Record<string, string>; summary: string }
 const LIME: [number, number, number] = [94, 128, 110];
 
+/** "Q4-2026" + 19/11/2026 -> "relatorio-q4-2026-ia-agentica-2026-11-19.pdf" */
+export function reportFileName(quarter: string, date = new Date()) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `relatorio-${quarter.toLowerCase()}-ia-agentica-${y}-${m}-${d}.pdf`;
+}
+
 export async function buildReportPdf(d: Data): Promise<Blob> {
   const { jsPDF } = await import("jspdf");
   const { default: autoTable } = await import("jspdf-autotable");

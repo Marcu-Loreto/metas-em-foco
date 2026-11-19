@@ -4,7 +4,7 @@ import { Download } from "lucide-react";
 import { useGoals, useFronts, summaryOf } from "@/lib/store";
 import { quarterLabel, quarterRange } from "@/lib/quarters";
 import { frontPct, overallPct } from "@/lib/progress";
-import { buildReportPdf } from "@/lib/report-pdf";
+import { buildReportPdf, reportFileName } from "@/lib/report-pdf";
 import { Bar, card, PageTitle, PriorityTag, Ring, StatusPill } from "@/components/app/bits";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -31,7 +31,7 @@ function Relatorio() {
     try {
       const blob = await buildReportPdf({ ...s, summary, fronts, quarterLabel: ql, range: quarterRange(s.activeQuarter) });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement("a"); a.href = url; a.download = `relatorio-${s.activeQuarter.toLowerCase()}-ia-agentica.pdf`;
+      const a = document.createElement("a"); a.href = url; a.download = reportFileName(s.activeQuarter);
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 30000);
     } finally { setBusy(false); }
