@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { FRONTS } from "@/data/goals";
-import { useGoals } from "@/lib/store";
+import { useGoals, useFronts } from "@/lib/store";
 import { frontPct } from "@/lib/progress";
 import { Bar, card, PageTitle, PriorityTag, StatusPill } from "@/components/app/bits";
 import { Slider } from "@/components/ui/slider";
@@ -19,11 +18,12 @@ export const Route = createFileRoute("/metas")({
 
 function Metas() {
   const { kr, setKr } = useGoals();
+  const fronts = useFronts();
   return (
     <>
       <PageTitle title="Metas" sub="Atualize o % de cada Key Result — a frente é a média dos seus KRs." />
-      <Accordion type="multiple" defaultValue={[FRONTS[0]!.id]} className="space-y-4">
-        {FRONTS.map((f) => {
+      <Accordion type="multiple" defaultValue={[fronts[0]?.id ?? ""]} className="space-y-4">
+        {fronts.map((f) => {
           const pct = frontPct(f, kr);
           return (
             <AccordionItem key={f.id} value={f.id} id={f.id} className={card + " border-b"}>

@@ -1,6 +1,8 @@
 import { cn } from "@/lib/utils";
 import { status, STATUS_LABEL, type Status } from "@/lib/progress";
 import type { Priority } from "@/data/goals";
+import { useGoals } from "@/lib/store";
+import { quarterRange } from "@/lib/quarters";
 
 const STATUS_CLS: Record<Status, string> = {
   concluido: "bg-success-soft text-success-ink",
@@ -9,7 +11,8 @@ const STATUS_CLS: Record<Status, string> = {
   risco: "bg-risk-soft text-risk-ink",
 };
 export function StatusPill({ pct }: { pct: number }) {
-  const s = status(pct);
+  const q = useGoals((st) => st.activeQuarter);
+  const s = status(pct, new Date(), quarterRange(q));
   return <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-medium", STATUS_CLS[s])}>{STATUS_LABEL[s]}</span>;
 }
 const PRI_CLS: Record<Priority, string> = {

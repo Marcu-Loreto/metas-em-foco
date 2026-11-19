@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Bar as RBar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Cell } from "recharts";
-import { FRONTS, type Priority } from "@/data/goals";
-import { useGoals } from "@/lib/store";
+import type { Priority } from "@/data/goals";
+import { useGoals, useFronts } from "@/lib/store";
 import { frontPct, overallPct, groupPct } from "@/lib/progress";
 import { Bar, card, PageTitle, PriorityTag, Ring, StatusPill } from "@/components/app/bits";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,14 +23,15 @@ const FILTERS: (Priority | "Todas")[] = ["Todas", "P0", "P1", "P2"];
 
 function Dashboard() {
   const { kr, kpiValue, notes, setKpi, setNote } = useGoals();
+  const fronts = useFronts();
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("Todas");
-  const shown = FRONTS.filter((f) => filter === "Todas" || f.priority === filter);
-  const total = overallPct(FRONTS, kr);
-  const p0 = groupPct(FRONTS.filter((f) => f.priority === "P0"), kr);
-  const rest = groupPct(FRONTS.filter((f) => f.priority !== "P0"), kr);
-  const doneKrs = FRONTS.flatMap((f) => f.krs).filter((k) => (kr[k.id] ?? 0) >= 100).length;
-  const allKrs = FRONTS.flatMap((f) => f.krs).length;
-  const chart = FRONTS.map((f) => ({ name: f.id.toUpperCase(), pct: frontPct(f, kr), p0: f.priority === "P0" }));
+  const shown = fronts.filter((f) => filter === "Todas" || f.priority === filter);
+  const total = overallPct(fronts, kr);
+  const p0 = groupPct(fronts.filter((f) => f.priority === "P0"), kr);
+  const rest = groupPct(fronts.filter((f) => f.priority !== "P0"), kr);
+  const doneKrs = fronts.flatMap((f) => f.krs).filter((k) => (kr[k.id] ?? 0) >= 100).length;
+  const allKrs = fronts.flatMap((f) => f.krs).length;
+  const chart = fronts.map((f) => ({ name: f.id.toUpperCase(), pct: frontPct(f, kr), p0: f.priority === "P0" }));
 
   return (
     <>

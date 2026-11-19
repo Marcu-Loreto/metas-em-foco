@@ -10,13 +10,20 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as HistoricoRouteImport } from './routes/historico'
 import { Route as KpisRouteImport } from './routes/kpis'
 import { Route as MetasRouteImport } from './routes/metas'
+import { Route as NovaMetaRouteImport } from './routes/nova-meta'
 import { Route as RelatorioRouteImport } from './routes/relatorio'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HistoricoRoute = HistoricoRouteImport.update({
+  id: '/historico',
+  path: '/historico',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KpisRoute = KpisRouteImport.update({
@@ -29,6 +36,11 @@ const MetasRoute = MetasRouteImport.update({
   path: '/metas',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NovaMetaRoute = NovaMetaRouteImport.update({
+  id: '/nova-meta',
+  path: '/nova-meta',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RelatorioRoute = RelatorioRouteImport.update({
   id: '/relatorio',
   path: '/relatorio',
@@ -37,35 +49,51 @@ const RelatorioRoute = RelatorioRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/historico': typeof HistoricoRoute
   '/kpis': typeof KpisRoute
   '/metas': typeof MetasRoute
+  '/nova-meta': typeof NovaMetaRoute
   '/relatorio': typeof RelatorioRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/historico': typeof HistoricoRoute
   '/kpis': typeof KpisRoute
   '/metas': typeof MetasRoute
+  '/nova-meta': typeof NovaMetaRoute
   '/relatorio': typeof RelatorioRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/historico': typeof HistoricoRoute
   '/kpis': typeof KpisRoute
   '/metas': typeof MetasRoute
+  '/nova-meta': typeof NovaMetaRoute
   '/relatorio': typeof RelatorioRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/kpis' | '/metas' | '/relatorio'
+  fullPaths:
+    '/' | '/historico' | '/kpis' | '/metas' | '/nova-meta' | '/relatorio'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/kpis' | '/metas' | '/relatorio'
-  id: '__root__' | '/' | '/kpis' | '/metas' | '/relatorio'
+  to: '/' | '/historico' | '/kpis' | '/metas' | '/nova-meta' | '/relatorio'
+  id:
+    | '__root__'
+    | '/'
+    | '/historico'
+    | '/kpis'
+    | '/metas'
+    | '/nova-meta'
+    | '/relatorio'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  HistoricoRoute: typeof HistoricoRoute
   KpisRoute: typeof KpisRoute
   MetasRoute: typeof MetasRoute
+  NovaMetaRoute: typeof NovaMetaRoute
   RelatorioRoute: typeof RelatorioRoute
 }
 
@@ -76,6 +104,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/historico': {
+      id: '/historico'
+      path: '/historico'
+      fullPath: '/historico'
+      preLoaderRoute: typeof HistoricoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/kpis': {
@@ -92,6 +127,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MetasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/nova-meta': {
+      id: '/nova-meta'
+      path: '/nova-meta'
+      fullPath: '/nova-meta'
+      preLoaderRoute: typeof NovaMetaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/relatorio': {
       id: '/relatorio'
       path: '/relatorio'
@@ -104,8 +146,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  HistoricoRoute: HistoricoRoute,
   KpisRoute: KpisRoute,
   MetasRoute: MetasRoute,
+  NovaMetaRoute: NovaMetaRoute,
   RelatorioRoute: RelatorioRoute,
 }
 export const routeTree = rootRouteImport

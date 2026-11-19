@@ -1,15 +1,21 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { LayoutGrid, Target, Gauge, FileText, Leaf } from "lucide-react";
+import { LayoutGrid, Target, Gauge, FileText, Leaf, PlusCircle, History } from "lucide-react";
+import { useGoals, useFronts } from "@/lib/store";
+import { quarterLabel } from "@/lib/quarters";
 
 const NAV = [
   { to: "/", label: "Dashboard", icon: LayoutGrid },
   { to: "/metas", label: "Metas", icon: Target },
   { to: "/kpis", label: "KPIs & OKRs", icon: Gauge },
   { to: "/relatorio", label: "Relatório final", icon: FileText },
+  { to: "/nova-meta", label: "Nova meta", icon: PlusCircle },
+  { to: "/historico", label: "Histórico", icon: History },
 ] as const;
 
 export function AppShell({ children }: { children: ReactNode }) {
+  const { activeQuarter, quarters, setActiveQuarter } = useGoals();
+  const empty = useFronts().length === 0;
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-20 border-b bg-background/85 backdrop-blur">
@@ -17,10 +23,14 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Link to="/" className="flex items-center gap-2">
             <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground"><Leaf className="h-5 w-5" /></span>
             <span className="leading-tight">
-              <span className="block font-display text-lg font-semibold">Metas Q4/2026</span>
+              <span className="block font-display text-lg font-semibold">Metas {quarterLabel(activeQuarter)}</span>
               <span className="block text-xs text-muted-foreground">IA Agêntica · Gestor: Marcu</span>
             </span>
           </Link>
+          <select aria-label="Quarter" value={activeQuarter} onChange={(e) => setActiveQuarter(e.target.value)}
+            className="rounded-full border bg-background px-3 py-1.5 text-sm font-medium">
+            {quarters.map((q) => <option key={q} value={q}>{quarterLabel(q)}</option>)}
+          </select>
           <nav className="ml-auto flex flex-wrap gap-1">
             {NAV.map(({ to, label, icon: Icon }) => (
               <Link key={to} to={to} activeOptions={{ exact: to === "/" }}
@@ -32,7 +42,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           </nav>
         </div>
       </header>
-      <main className="mx-auto max-w-7xl px-6 py-8">{children}</main>
+      <main className="mx-auto max-w-7xl px-6 py-8">
+        {empty && <div className="mb-6 rounded-2xl border bg-muted p-4 text-sm">O {quarterLabel(activeQuarter)} ainda não tem metas. <Link to="/nova-meta" className="font-medium text-primary underline">Cadastrar a primeira meta</Link></div>}
+        {children}
+      </main>
     </div>
   );
 }

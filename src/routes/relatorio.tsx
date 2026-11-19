@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Download } from "lucide-react";
-import { FRONTS } from "@/data/goals";
-import { useGoals } from "@/lib/store";
+import { useGoals, useFronts, summaryOf } from "@/lib/store";
+import { quarterLabel, quarterRange } from "@/lib/quarters";
 import { frontPct, overallPct } from "@/lib/progress";
 import { buildReportPdf } from "@/lib/report-pdf";
 import { Bar, card, PageTitle, PriorityTag, Ring, StatusPill } from "@/components/app/bits";
@@ -21,32 +21,35 @@ export const Route = createFileRoute("/relatorio")({
 
 function Relatorio() {
   const s = useGoals();
+  const fronts = useFronts();
+  const ql = quarterLabel(s.activeQuarter);
+  const summary = summaryOf(s, s.activeQuarter);
   const [busy, setBusy] = useState(false);
-  const total = overallPct(FRONTS, s.kr);
+  const total = overallPct(fronts, s.kr);
   async function exportPdf() {
     setBusy(true);
     try {
-      const blob = await buildReportPdf(s);
+      const blob = await buildReportPdf({ ...s, summary, fronts, quarterLabel: ql, range: quarterRange(s.activeQuarter) });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement("a"); a.href = url; a.download = "relatorio-q4-2026-ia-agentica.pdf";
+      const a = document.createElement("a"); a.href = url; a.download = `relatorio-${s.activeQuarter.toLowerCase()}-ia-agentica.pdf`;
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 30000);
     } finally { setBusy(false); }
   }
   return (
     <>
-      <PageTitle title="Relatório final" sub="Consolidação do Q4/2026 para apresentação.">
+      <PageTitle title="Relatório final" sub={`Consolidação do ${ql} para apresentação.`}>
         <Button onClick={exportPdf} disabled={busy} size="lg" className="rounded-full"><Download className="h-4 w-4" />{busy ? "Gerando…" : "Exportar PDF"}</Button>
       </PageTitle>
       <div className="grid gap-5 lg:grid-cols-[auto_1fr]">
         <div className={card + " grid place-items-center"}><Ring pct={total} size={170} label="geral ponderado" /></div>
         <div className={card}>
           <h2 className="mb-2 text-lg font-semibold">Resumo executivo</h2>
-          <Textarea className="min-h-32 bg-background" placeholder="Principais entregas, aprendizados e próximos passos para 2027…" value={s.summary} onChange={(e) => s.setSummary(e.target.value)} />
+          <Textarea className="min-h-32 bg-background" placeholder="Principais entregas, aprendizados e próximos passos para 2027…" value={summary} onChange={(e) => s.setSummary(e.target.value)} />
         </div>
       </div>
       <div className="mt-6 space-y-4">
-        {FRONTS.map((f) => {
+        {fronts.map((f) => {
           const p = frontPct(f, s.kr);
           return (
             <section key={f.id} className={card}>

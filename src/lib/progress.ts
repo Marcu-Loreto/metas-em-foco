@@ -21,9 +21,9 @@ export function groupPct(fronts: Front[], kr: KrProgress): number {
 }
 export type Status = "concluido" | "no-prazo" | "atencao" | "risco";
 /** Compare progress against time elapsed in the quarter (Nov 1 – Dec 31, 2026). */
-export function status(pct: number, now = new Date()): Status {
+export function status(pct: number, now = new Date(), range = { start: Date.UTC(2026, 10, 1), end: Date.UTC(2026, 11, 31) }): Status {
   if (pct >= 100) return "concluido";
-  const start = Date.UTC(2026, 10, 1), end = Date.UTC(2026, 11, 31);
+  const { start, end } = range;
   const elapsed = clamp(((now.getTime() - start) / (end - start)) * 100);
   if (pct >= elapsed - 10) return "no-prazo";
   if (pct >= elapsed - 25) return "atencao";

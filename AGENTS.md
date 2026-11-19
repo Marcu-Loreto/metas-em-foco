@@ -31,3 +31,4 @@ use the editor.
 
 - Goal content lives in src/data/goals.ts; user progress/notes persist via zustand in localStorage (rehydrated in __root effect) — single-user app, no backend yet.
 - Completion % rules live in src/lib/progress.ts (front = KR average; overall weights P0 80% / P1+P2 20%) and are covered by progress.test.ts.
+- Quarters: Q4\/2026 fronts are static in goals.ts; other quarters' fronts are user-created and persisted in the zustand store (customFronts); pages read via useFronts() for the active quarter — keeps the original plan untouched while allowing new quarters.

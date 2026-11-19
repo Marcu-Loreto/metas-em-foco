@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { FRONTS } from "@/data/goals";
-import { useGoals } from "@/lib/store";
+import { useGoals, useFronts } from "@/lib/store";
 import { card, PageTitle, PriorityTag, Bar } from "@/components/app/bits";
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
@@ -18,11 +17,12 @@ export const Route = createFileRoute("/kpis")({
 
 function Kpis() {
   const { kr, kpiValue, notes, setKpi, setNote } = useGoals();
+  const fronts = useFronts();
   return (
     <>
       <PageTitle title="KPIs & OKRs" sub="Cada KPI com o objetivo e os Key Results que o sustentam." />
       <div className="space-y-5">
-        {FRONTS.map((f) => {
+        {fronts.map((f) => {
           const v = kpiValue[f.id] ?? 0;
           return (
             <article key={f.id} className={cn(card, "grid gap-6 lg:grid-cols-[1.1fr_1fr]")}>

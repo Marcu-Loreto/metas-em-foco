@@ -17,3 +17,12 @@ describe("progress", () => {
     expect(status(100)).toBe("concluido");
   });
 });
+
+import { quarterRange } from "@/lib/quarters";
+describe("quarters", () => {
+  it("Q1/2027 vai de 1º jan a 31 mar", () => {
+    const r = quarterRange("Q1-2027");
+    expect(new Date(r.start).toISOString().slice(0, 10)).toBe("2027-01-01");
+    expect(new Date(r.end).toISOString().slice(0, 10)).toBe("2027-03-31");
+  });
+});
