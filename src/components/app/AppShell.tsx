@@ -25,7 +25,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             {NAV.map(({ to, label, icon: Icon }) => (
               <Link key={to} to={to} activeOptions={{ exact: to === "/" }}
                 className="flex items-center gap-2 rounded-full px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-secondary-foreground"
-                activeProps={{ className: "bg-secondary text-secondary-foreground font-medium" }}>
+                activeProps={{ className: "bg-primary text-primary-foreground font-medium shadow-soft" }}>
                 <Icon className="h-4 w-4" />{label}
               </Link>
             ))}

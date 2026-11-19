@@ -2,14 +2,14 @@ import { FRONTS } from "@/data/goals";
 import { frontPct, overallPct, groupPct, status, STATUS_LABEL } from "@/lib/progress";
 
 interface Data { kr: Record<string, number>; kpiValue: Record<string, number>; notes: Record<string, string>; summary: string }
-const MOSS: [number, number, number] = [86, 110, 70];
+const LIME: [number, number, number] = [126, 147, 0];
 
 export async function buildReportPdf(d: Data): Promise<Blob> {
   const { jsPDF } = await import("jspdf");
   const { default: autoTable } = await import("jspdf-autotable");
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const W = doc.internal.pageSize.getWidth();
-  doc.setFillColor(...MOSS); doc.rect(0, 0, W, 30, "F");
+  doc.setFillColor(...LIME); doc.rect(0, 0, W, 30, "F");
   doc.setTextColor(255); doc.setFontSize(18); doc.text("Relatório Final · Q4/2026 – IA Agêntica", 14, 15);
   doc.setFontSize(10); doc.text(`Gestor: Marcu · Gerado em ${new Date().toLocaleDateString("pt-BR")}`, 14, 23);
   doc.setTextColor(40);
@@ -22,7 +22,7 @@ export async function buildReportPdf(d: Data): Promise<Blob> {
     doc.setFontSize(11); doc.text("Resumo executivo", 14, y); y += 5;
     doc.setFontSize(9); const lines = doc.splitTextToSize(d.summary, W - 28); doc.text(lines, 14, y); y += lines.length * 4 + 4;
   }
-  const head = { fillColor: MOSS, textColor: 255 } as const;
+  const head = { fillColor: LIME, textColor: 255 } as const;
   autoTable(doc, { startY: y, headStyles: head, styles: { fontSize: 8 },
     head: [["Prio", "Frente", "%", "Status", "KPI", "KPI %"]],
     body: FRONTS.map((f) => { const p = frontPct(f, d.kr); return [f.priority, f.name, `${p}%`, STATUS_LABEL[status(p)], f.kpi.name, `${d.kpiValue[f.id] ?? 0}%`]; }) });
