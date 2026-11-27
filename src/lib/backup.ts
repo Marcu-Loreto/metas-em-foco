@@ -14,6 +14,7 @@ export type BackupState = {
   activeQuarter: string;
   quarters: string[];
   customFronts: CustomFront[];
+  dueDates: Record<string, string>;
 };
 
 export type BackupFile = {
@@ -108,6 +109,7 @@ export function buildBackup(s: BackupState, exportedAt = new Date()): BackupFile
       activeQuarter: s.activeQuarter,
       quarters: s.quarters,
       customFronts: s.customFronts,
+      dueDates: s.dueDates,
     },
   };
 }
@@ -151,6 +153,7 @@ export function parseBackup(text: string): BackupState {
     summaries: strMap(s["summaries"], "summaries"),
     activeQuarter,
     quarters: withBase,
+    dueDates: isRecord(s["dueDates"]) ? strMap(s["dueDates"], "dueDates") : {},
     customFronts: (Array.isArray(s["customFronts"]) ? s["customFronts"] : []).map(normalizeFront),
   };
 }

@@ -13,6 +13,8 @@ interface State {
   activeQuarter: string;
   quarters: string[];
   customFronts: CustomFront[];
+  dueDates: Record<string, string>;
+  setDueDate: (id: string, v: string | null) => void;
   setKr: (id: string, v: number) => void;
   setKpi: (id: string, v: number) => void;
   setNote: (id: string, v: string) => void;
@@ -26,7 +28,8 @@ export const useGoals = create<State>()(
   persist(
     (set) => ({
       kr: {}, kpiValue: {}, notes: {}, summary: "", summaries: {},
-      activeQuarter: BASE_QUARTER, quarters: [BASE_QUARTER], customFronts: [],
+      activeQuarter: BASE_QUARTER, quarters: [BASE_QUARTER], customFronts: [], dueDates: {},
+      setDueDate: (id, v) => set((s) => { const d = { ...s.dueDates }; if (v) d[id] = v; else delete d[id]; return { dueDates: d }; }),
       setKr: (id, v) => set((s) => ({ kr: { ...s.kr, [id]: v } })),
       setKpi: (id, v) => set((s) => ({ kpiValue: { ...s.kpiValue, [id]: v } })),
       setNote: (id, v) => set((s) => ({ notes: { ...s.notes, [id]: v } })),

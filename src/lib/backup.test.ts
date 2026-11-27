@@ -15,6 +15,7 @@ const state: BackupState = {
   summaries: { "Q1-2027": "Primeira meta do ano." },
   activeQuarter: "Q1-2027",
   quarters: ["Q4-2026", "Q1-2027"],
+  dueDates: { gov: "2026-12-31" },
   customFronts: [
     {
       id: "x1",
