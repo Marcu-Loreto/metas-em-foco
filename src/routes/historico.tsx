@@ -1,15 +1,18 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { CheckCircle2 } from "lucide-react";
+import { useRef } from "react";
+import { CheckCircle2, Download, Upload } from "lucide-react";
+import { toast } from "sonner";
 import { useGoals, frontsOf } from "@/lib/store";
 import { quarterLabel, quarterRange } from "@/lib/quarters";
 import { frontPct, overallPct, status, STATUS_LABEL } from "@/lib/progress";
+import { buildBackup, backupFileName, downloadJson, parseBackup } from "@/lib/backup";
 import { card, PageTitle, PriorityTag, Bar } from "@/components/app/bits";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/historico")({
   head: () => ({ meta: [
     { title: "Histórico de metas por quarter · IA Agêntica" },
-    { name: "description", content: "Registro das metas e Key Results concluídos em cada quarter." },
+    { name: "description", content: "Registro das metas e Key Results concluídos em cada quarter, com exportação e importação do histórico." },
     { property: "og:title", content: "Histórico de metas por quarter" },
     { property: "og:description", content: "Metas concluídas e completude de cada quarter." },
     { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
@@ -20,10 +23,56 @@ export const Route = createFileRoute("/historico")({
 function Historico() {
   const { quarters, customFronts, kr, setActiveQuarter } = useGoals();
   const nav = useNavigate();
+  const fileRef = useRef<HTMLInputElement>(null);
   const list = [...quarters].reverse();
+
+  function exportar() {
+    const s = useGoals.getState();
+    const nome = backupFileName(s.activeQuarter);
+    downloadJson(nome, JSON.stringify(buildBackup(s), null, 2));
+    toast.success(`Arquivo ${nome} baixado.`);
+  }
+
+  async function importar(file: File) {
+    try {
+      const st = parseBackup(await file.text());
+      useGoals.setState(st);
+      toast.success(
+        `Histórico carregado: ${st.quarters.length} quarter${st.quarters.length > 1 ? "s" : ""}, ` +
+          `${st.customFronts.length} meta${st.customFronts.length === 1 ? "" : "s"} cadastrada${st.customFronts.length === 1 ? "" : "s"}.`,
+      );
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Não foi possível ler este arquivo.");
+    }
+  }
+
   return (
     <>
-      <PageTitle title="Histórico" sub="Metas concluídas e completude de cada quarter." />
+      <PageTitle title="Histórico" sub="Metas concluídas e completude de cada quarter.">
+        <div className="flex flex-wrap items-center gap-2">
+          <Button variant="outline" onClick={exportar}>
+            <Download className="h-4 w-4" />Exportar dados
+          </Button>
+          <Button variant="outline" onClick={() => fileRef.current?.click()}>
+            <Upload className="h-4 w-4" />Importar dados
+          </Button>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="application/json,.json"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) void importar(f);
+              e.target.value = "";
+            }}
+          />
+        </div>
+      </PageTitle>
+      <p className="-mt-6 mb-8 text-sm text-muted-foreground">
+        Os percentuais, as notas e as metas criadas ficam salvos apenas neste navegador. Exporte um
+        arquivo para levar o histórico para outra máquina ou guardá-lo junto do projeto.
+      </p>
       <div className="space-y-6">
         {list.map((q) => {
           const fronts = frontsOf(q, customFronts);
