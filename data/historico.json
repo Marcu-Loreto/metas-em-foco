@@ -1,0 +1,71 @@
+{
+  "app": "metas-q4-2026",
+  "version": 1,
+  "exportedAt": "2026-11-27T19:40:41.830Z",
+  "state": {
+    "kr": {
+      "uau-kr1": 100,
+      "uau-kr2": 100,
+      "uau-kr3": 80,
+      "uau-kr4": 65,
+      "orq-kr1": 100,
+      "orq-kr2": 100,
+      "orq-kr3": 75,
+      "orq-kr4": 80,
+      "ctx-kr1": 30,
+      "ctx-kr2": 50,
+      "ctx-kr3": 90,
+      "gov-kr1": 90,
+      "gov-kr2": 40,
+      "gov-kr3": 45,
+      "gov-kr4": 45,
+      "wpp-kr1": 30,
+      "wpp-kr2": 30,
+      "wpp-kr3": 25,
+      "b2b-kr1": 10,
+      "plat-kr1": 10
+    },
+    "kpiValue": {
+      "orq": 95,
+      "uau": 85,
+      "ctx": 60,
+      "gov": 50,
+      "wpp": 35
+    },
+    "notes": {
+      "uau": "Ponto critico a ser superado: segurança a fraude - Como integrar as ações de aquisição d eprodutos pelo whatsapp ao sistema antifraude \n\nLink de relatório dinâmico: https://claude.ai/artifact/Sztgwuo2wGdAXtqBDgfk6z?sk=ayxnJqrIq13Gsb0_8fnnYw ",
+      "ctx": "Integracao MCP com Snowflake : agente ja foi cirado, mas ainda falta o MCP . Equipe de dados esta trabalhando, Não retronaram previsão de data ",
+      "orq": "Realizado a integracao com as APIs disponiveis no backend ( espelho das ações do app-mobile) . Issue de segurança : regras antifraude precisam ser revalidadas para resgates de produtso via Whatsapp",
+      "wpp": "Levantado as demandas da MINU junto a WIV - Visão da Wiv.\nPendencia conversar com os clienets MINU sobre o trabalho da WIV"
+    },
+    "summary": "UAU-CAIXA:\nhttps://claude.ai/artifact/Sztgwuo2wGdAXtqBDgfk6z?sk=ayxnJqrIq13Gsb0_8fnnYw\n\nOutros:\n1-Iniciado o processo de handover com a Wiv \n1.1-   Reunião com o deve da wiv para entender as demandas recebidas \n1.2 - Solicitado nomes das pessoas focais nos times de atendimento e Software para entender o processo \n\n\n\n",
+    "summaries": {},
+    "activeQuarter": "Q4-2026",
+    "quarters": [
+      "Q4-2026"
+    ],
+    "customFronts": [],
+    "dueDates": {
+      "uau": "2026-12-18",
+      "orq": "2026-12-18",
+      "ctx": "2026-12-22",
+      "gov": "2027-01-29",
+      "wpp": "2026-12-18",
+      "b2b": "2026-12-18",
+      "plat": "2027-01-15",
+      "uau-kr1": "2026-11-27",
+      "uau-kr2": "2026-11-30",
+      "uau-kr3": "2026-12-18",
+      "uau-kr4": "2026-12-18",
+      "orq-kr1": "2026-11-19",
+      "ctx-kr1": "2026-12-11",
+      "ctx-kr2": "2026-12-18",
+      "ctx-kr3": "2026-12-18"
+    },
+    "closedDates": {
+      "orq-kr1": "2026-11-19",
+      "uau-kr1": "2026-11-11",
+      "uau-kr2": "2026-11-11"
+    }
+  }
+}
