@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { reportFileName, reportDueDate } from "./report-pdf";
+import { reportFileName, reportDueDate, reportDates } from "./report-pdf";
 
 describe("reportFileName", () => {
   it("traz a data no nome do arquivo", () => {
@@ -15,6 +15,9 @@ describe("reportFileName", () => {
 });
 
 describe("datas de finalização no relatório", () => {
+  it("exporta estimativa e fechamento de 19/11 sem atraso acumulado", () => {
+    expect(reportDates("2026-11-19", "2026-11-19", 100, new Date(2026, 10, 27))).toBe("Estimada: 19/11/2026 · Fechamento: 19/11/2026 · Fechada no prazo");
+  });
   it("inclui a data definida e os dias restantes", () => {
     expect(reportDueDate("2026-12-31", new Date(2026, 10, 27))).toBe("31/12/2026 · Faltam 34 dias");
   });

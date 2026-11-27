@@ -3,6 +3,7 @@ import { status, STATUS_LABEL, type Status } from "@/lib/progress";
 import type { Priority } from "@/data/goals";
 import { useGoals } from "@/lib/store";
 import { quarterRange } from "@/lib/quarters";
+import { DeadlineBadge } from "@/components/app/due-date";
 
 const STATUS_CLS: Record<Status, string> = {
   concluido: "bg-success-soft text-success-ink",
@@ -10,8 +11,11 @@ const STATUS_CLS: Record<Status, string> = {
   atencao: "bg-warn-soft text-warn-ink",
   risco: "bg-risk-soft text-risk-ink",
 };
-export function StatusPill({ pct }: { pct: number }) {
+export function StatusPill({ pct, id }: { pct: number; id?: string }) {
   const q = useGoals((st) => st.activeQuarter);
+  const due = useGoals((st) => id ? st.dueDates[id] : undefined);
+  const closed = useGoals((st) => id ? st.closedDates[id] : undefined);
+  if (due || closed) return <DeadlineBadge due={due} closed={closed} pct={pct} />;
   const s = status(pct, new Date(), quarterRange(q));
   return <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-medium", STATUS_CLS[s])}>{STATUS_LABEL[s]}</span>;
 }

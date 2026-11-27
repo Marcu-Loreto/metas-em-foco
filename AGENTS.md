@@ -34,3 +34,5 @@ use the editor.
 - Quarters: Q4\/2026 fronts are static in goals.ts; other quarters' fronts are user-created and persisted in the zustand store (customFronts); pages read via useFronts() for the active quarter — keeps the original plan untouched while allowing new quarters.
 - Due-date controls are shared by Goals and Report and use the same store field; PDF exports read that field so deadlines stay synchronized.
 - Store KR deadlines in the existing dueDates map by KR ID so backups and local-file sync preserve them; route deadline edits through store actions and due-policy helpers to enforce parent limits atomically.
+- Keep estimated deadlines in dueDates and actual completion dates in closedDates for both goals and KRs; shared closure helpers classify outcomes without changing estimates, and backups/PDF preserve both maps.
+- New KR completion records today's local date, explicit closure completes the item, and reopening clears closure; auto-close a goal only when every KR has a known closure, using the latest one to avoid inventing historical dates.

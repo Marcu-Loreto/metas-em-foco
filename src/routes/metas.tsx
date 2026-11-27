@@ -4,10 +4,8 @@ import { frontPct } from "@/lib/progress";
 import { Bar, card, PageTitle, PriorityTag, StatusPill } from "@/components/app/bits";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DaysBadge } from "@/components/app/due-date";
+import { DeadlineBadge } from "@/components/app/due-date";
 import { GoalDuePicker, KrDuePicker } from "@/components/app/kr-due-date";
-import { useEffect, useState } from "react";
-import { daysLeft } from "@/lib/due";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 export const Route = createFileRoute("/metas")({
@@ -22,9 +20,7 @@ export const Route = createFileRoute("/metas")({
 });
 
 function Metas() {
-  const { kr, setKr, dueDates } = useGoals();
-  const [today, setToday] = useState<Date | null>(null);
-  useEffect(() => setToday(new Date()), []);
+  const { kr, setKr, dueDates, closedDates } = useGoals();
   const fronts = useFronts();
   return (
     <>
@@ -39,8 +35,8 @@ function Metas() {
                 <div className="flex flex-1 flex-wrap items-center gap-3 pr-4 text-left">
                   <PriorityTag p={f.priority} />
                   <span className="font-display text-lg font-semibold">{f.name}</span>
-                  <StatusPill pct={pct} />
-                  {due && today && <DaysBadge n={daysLeft(due, today)} />}
+                  {!due && !closedDates[f.id] && <StatusPill pct={pct} />}
+                  <DeadlineBadge due={due} closed={closedDates[f.id]} pct={pct} />
                   <div className="ml-auto flex w-48 items-center gap-3"><Bar pct={pct} /><b className="w-10 text-right">{pct}%</b></div>
                 </div>
               </AccordionTrigger>

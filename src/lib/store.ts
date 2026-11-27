@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 import { FRONTS, type Front } from "@/data/goals";
 import { BASE_QUARTER, sortQuarters } from "@/lib/quarters";
 import { updateGoalDue, updateKrDue } from "@/lib/due-policy";
+import { localDate, reconcileFrontClosure } from "@/lib/closure";
 
 export type CustomFront = Front & { quarter: string };
 interface State {
@@ -15,6 +16,8 @@ interface State {
   quarters: string[];
   customFronts: CustomFront[];
   dueDates: Record<string, string>;
+  closedDates: Record<string, string>;
+  setClosedDate: (id: string, v: string | null) => void;
   setDueDate: (id: string, v: string | null) => boolean;
   setKrDueDate: (frontId: string, krId: string, v: string | null, extendParent?: boolean) => boolean;
   setKr: (id: string, v: number) => void;
@@ -30,7 +33,22 @@ export const useGoals = create<State>()(
   persist(
     (set, get) => ({
       kr: {}, kpiValue: {}, notes: {}, summary: "", summaries: {},
-      activeQuarter: BASE_QUARTER, quarters: [BASE_QUARTER], customFronts: [], dueDates: {},
+      activeQuarter: BASE_QUARTER, quarters: [BASE_QUARTER], customFronts: [], dueDates: {}, closedDates: {},
+      setClosedDate: (id, v) => set((s) => {
+        const fronts = [...FRONTS, ...s.customFronts];
+        const goal = fronts.find((f) => f.id === id);
+        const parent = goal ?? fronts.find((f) => f.krs.some((k) => k.id === id));
+        if (!parent) return {};
+        const closedDates = { ...s.closedDates };
+        const kr = { ...s.kr };
+        if (v) {
+          closedDates[id] = v;
+          if (goal) {
+            for (const k of goal.krs) { kr[k.id] = 100; closedDates[k.id] ??= v; }
+          } else kr[id] = 100;
+        } else delete closedDates[id];
+        return { kr, closedDates: goal ? closedDates : reconcileFrontClosure(parent, kr, closedDates) };
+      }),
       setDueDate: (id, v) => {
         const s = get();
         const front = [...FRONTS, ...s.customFronts].find((f) => f.id === id);
@@ -48,7 +66,14 @@ export const useGoals = create<State>()(
         set({ dueDates });
         return true;
       },
-      setKr: (id, v) => set((s) => ({ kr: { ...s.kr, [id]: v } })),
+      setKr: (id, v) => set((s) => {
+        const kr = { ...s.kr, [id]: v };
+        const closedDates = { ...s.closedDates };
+        if (v >= 100 && (s.kr[id] ?? 0) < 100) closedDates[id] = localDate();
+        if (v < 100) delete closedDates[id];
+        const parent = [...FRONTS, ...s.customFronts].find((f) => f.krs.some((k) => k.id === id));
+        return { kr, closedDates: reconcileFrontClosure(parent, kr, closedDates) };
+      }),
       setKpi: (id, v) => set((s) => ({ kpiValue: { ...s.kpiValue, [id]: v } })),
       setNote: (id, v) => set((s) => ({ notes: { ...s.notes, [id]: v } })),
       setSummary: (v) => set((s) => s.activeQuarter === BASE_QUARTER ? { summary: v } : { summaries: { ...s.summaries, [s.activeQuarter]: v } }),

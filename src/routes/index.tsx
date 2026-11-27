@@ -86,7 +86,7 @@ function Dashboard() {
           return (
             <article key={f.id} className={cn(card, "flex flex-col gap-4")}>
               <div className="flex items-start justify-between gap-2">
-                <div className="flex items-center gap-2"><PriorityTag p={f.priority} /><StatusPill pct={pct} /></div>
+                <div className="flex flex-wrap items-center gap-2"><PriorityTag p={f.priority} /><StatusPill pct={pct} id={f.id} /></div>
                 <span className="text-right"><span className="block font-display text-2xl font-semibold">{pct}%</span><span className="text-[10px] text-muted-foreground">média dos KRs</span></span>
               </div>
               <div>

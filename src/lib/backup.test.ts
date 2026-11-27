@@ -16,6 +16,7 @@ const state: BackupState = {
   activeQuarter: "Q1-2027",
   quarters: ["Q4-2026", "Q1-2027"],
   dueDates: { gov: "2026-12-31", "gov-kr1": "2026-12-13" },
+  closedDates: { "orq-kr1": "2026-11-19" },
   customFronts: [
     {
       id: "x1",
@@ -49,6 +50,11 @@ describe("backupFileName", () => {
 });
 
 describe("buildBackup + parseBackup", () => {
+  it("importa backups antigos sem inventar datas de fechamento", () => {
+    const file = buildBackup(state, D);
+    const { closedDates: _closed, ...old } = file.state;
+    expect(parseBackup(JSON.stringify({ ...file, state: old })).closedDates).toEqual({});
+  });
   it("preserva todos os dados num ida e volta", () => {
     const file = buildBackup(state, D);
     expect(file.app).toBe(BACKUP_APP);

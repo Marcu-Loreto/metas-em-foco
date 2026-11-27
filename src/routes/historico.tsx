@@ -8,6 +8,7 @@ import { frontPct, overallPct, status, STATUS_LABEL } from "@/lib/progress";
 import { buildBackup, backupFileName, downloadJson, parseBackup } from "@/lib/backup";
 import { card, PageTitle, PriorityTag, Bar } from "@/components/app/bits";
 import { Button } from "@/components/ui/button";
+import { deadlineStatus } from "@/lib/closure";
 
 export const Route = createFileRoute("/historico")({
   head: () => ({ meta: [
@@ -21,7 +22,7 @@ export const Route = createFileRoute("/historico")({
 });
 
 function Historico() {
-  const { quarters, customFronts, kr, setActiveQuarter } = useGoals();
+  const { quarters, customFronts, kr, dueDates, closedDates, setActiveQuarter } = useGoals();
   const nav = useNavigate();
   const fileRef = useRef<HTMLInputElement>(null);
   const list = [...quarters].reverse();
@@ -103,7 +104,7 @@ function Historico() {
                         {p >= 100 ? <CheckCircle2 className="h-4 w-4 text-primary" /> : <span className="h-4 w-4" />}
                         <PriorityTag p={f.priority} />
                         <span className={"flex-1 " + (p >= 100 ? "font-medium" : "")}>{f.name}</span>
-                        <span className="text-muted-foreground">{STATUS_LABEL[status(p, new Date(), quarterRange(q))]}</span>
+                        <span className="text-muted-foreground">{deadlineStatus(dueDates[f.id], closedDates[f.id], p)?.label ?? STATUS_LABEL[status(p, new Date(), quarterRange(q))]}</span>
                         <span className="w-12 text-right font-semibold">{p}%</span>
                       </li>);
                   })}
