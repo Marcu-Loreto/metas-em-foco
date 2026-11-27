@@ -9,11 +9,12 @@ export function localDataPlugin(): Plugin {
     name: "local-data-file",
     apply: "serve",
     configureServer(server) {
-      server.middlewares.use("/__local-data", (req, res) => {
+      server.middlewares.use("/__local-data", (req, res): void => {
         if (req.method === "GET") {
-          if (!fs.existsSync(file)) { res.statusCode = 404; return res.end(); }
+          if (!fs.existsSync(file)) { res.statusCode = 404; res.end(); return; }
           res.setHeader("Content-Type", "application/json");
-          return res.end(fs.readFileSync(file, "utf8"));
+          res.end(fs.readFileSync(file, "utf8"));
+          return;
         }
         if (req.method === "PUT") {
           let body = "";
