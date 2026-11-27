@@ -12,8 +12,15 @@ export function DaysBadge({ n }: { n: number }) {
   return <span className={"inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium " + tone}><CalendarIcon className="h-3 w-3" />{daysLeftLabel(n)}</span>;
 }
 
-export function DuePicker({ value, onChange }: { value: string | undefined; onChange: (v: string | null) => void }) {
+export function DuePicker({ value, onChange, label = "Data de finalização", initialDate }: {
+  value: string | undefined;
+  onChange: (v: string | null) => void;
+  label?: string;
+  initialDate?: string | undefined;
+}) {
   const date = value ? new Date(value + "T12:00:00") : undefined;
+  const month = date ?? (initialDate ? new Date(initialDate + "T12:00:00") : undefined);
+  const [open, setOpen] = useState(false);
   const [today, setToday] = useState<Date | null>(null);
   useEffect(() => {
     setToday(new Date());
@@ -22,15 +29,15 @@ export function DuePicker({ value, onChange }: { value: string | undefined; onCh
   }, []);
   return (
     <div className="my-4 flex flex-wrap items-center gap-2 text-sm">
-      <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Data de finalização</span>
-      <Popover>
+      <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</span>
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button variant="outline" size="sm" className={date ? "" : "text-muted-foreground"} aria-label="Escolher data de finalização">
+          <Button variant="outline" size="sm" className={date ? "" : "text-muted-foreground"} aria-label={`Escolher ${label.toLowerCase()}`}>
             <CalendarIcon />{date ? format(date, "dd/MM/yyyy") : "Definir data"}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
-          <Calendar mode="single" locale={ptBR} selected={date} onSelect={(d) => onChange(d ? format(d, "yyyy-MM-dd") : null)} initialFocus className="p-3 pointer-events-auto" />
+          <Calendar mode="single" locale={ptBR} selected={date} {...(month ? { defaultMonth: month } : {})} onSelect={(d) => { setOpen(false); onChange(d ? format(d, "yyyy-MM-dd") : null); }} initialFocus className="p-3 pointer-events-auto" />
         </PopoverContent>
       </Popover>
       {value && today && <DaysBadge n={daysLeft(value, today)} />}

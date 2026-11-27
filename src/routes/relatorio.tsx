@@ -8,7 +8,7 @@ import { buildReportPdf, reportFileName } from "@/lib/report-pdf";
 import { Bar, card, PageTitle, PriorityTag, Ring, StatusPill } from "@/components/app/bits";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { DuePicker } from "@/components/app/due-date";
+import { GoalDuePicker } from "@/components/app/kr-due-date";
 
 export const Route = createFileRoute("/relatorio")({
   head: () => ({ meta: [
@@ -57,7 +57,7 @@ function Relatorio() {
             <section key={f.id} className={card + " min-w-0 break-words"}>
               <div className="flex flex-wrap items-center gap-3"><PriorityTag p={f.priority} /><h3 className="text-lg font-semibold">{f.name}</h3><StatusPill pct={p} /><b className="ml-auto">{p}%</b></div>
               <div className="mt-3"><Bar pct={p} /></div>
-              <DuePicker value={s.dueDates[f.id]} onChange={(value) => s.setDueDate(f.id, value)} />
+              <GoalDuePicker front={f} />
               <ul className="mt-3 grid gap-1 text-sm md:grid-cols-2">
                 {f.krs.map((k, i) => <li key={k.id} className="flex justify-between gap-3"><span className={(s.kr[k.id] ?? 0) >= 100 ? "" : "text-muted-foreground"}>KR{i + 1} · {k.text}</span><span>{s.kr[k.id] ?? 0}%</span></li>)}
               </ul>

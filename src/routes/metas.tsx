@@ -4,7 +4,8 @@ import { frontPct } from "@/lib/progress";
 import { Bar, card, PageTitle, PriorityTag, StatusPill } from "@/components/app/bits";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DaysBadge, DuePicker } from "@/components/app/due-date";
+import { DaysBadge } from "@/components/app/due-date";
+import { GoalDuePicker, KrDuePicker } from "@/components/app/kr-due-date";
 import { useEffect, useState } from "react";
 import { daysLeft } from "@/lib/due";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -21,7 +22,7 @@ export const Route = createFileRoute("/metas")({
 });
 
 function Metas() {
-  const { kr, setKr, dueDates, setDueDate } = useGoals();
+  const { kr, setKr, dueDates } = useGoals();
   const [today, setToday] = useState<Date | null>(null);
   useEffect(() => setToday(new Date()), []);
   const fronts = useFronts();
@@ -44,7 +45,7 @@ function Metas() {
                 </div>
               </AccordionTrigger>
               <AccordionContent>
-                <DuePicker value={dueDates[f.id]} onChange={(v) => setDueDate(f.id, v)} />
+                <GoalDuePicker front={f} />
                 <div className="grid gap-4 pt-2 text-sm md:grid-cols-2">
                   <Info t="Objetivo (OKR)" v={f.okrObjective} />
                   <Info t="Resultados esperados" v={f.expected} />
@@ -61,11 +62,12 @@ function Metas() {
                   {f.krs.map((k, i) => {
                     const v = kr[k.id] ?? 0;
                     return (
-                      <li key={k.id} className="grid items-center gap-3 rounded-xl border bg-background p-3 md:grid-cols-[auto_1fr_220px_48px]">
+                      <li key={k.id} className="grid min-w-0 items-center gap-3 rounded-xl border bg-background p-3 md:grid-cols-[auto_1fr_220px_48px]">
                         <Checkbox checked={v >= 100} onCheckedChange={(c) => setKr(k.id, c ? 100 : 0)} aria-label={`Concluir KR${i + 1}`} />
-                        <span><b>KR{i + 1}</b> · {k.text}</span>
+                        <span className="min-w-0 break-words"><b>KR{i + 1}</b> · {k.text}</span>
                         <Slider value={[v]} max={100} step={5} onValueChange={([n]) => setKr(k.id, n ?? 0)} aria-label={`Progresso KR${i + 1}`} />
                         <b className="text-right">{v}%</b>
+                        <div className="min-w-0 md:col-span-4"><KrDuePicker front={f} krId={k.id} number={i + 1} /></div>
                       </li>
                     );
                   })}

@@ -33,3 +33,4 @@ use the editor.
 - Completion % rules live in src/lib/progress.ts (front = KR average; overall weights P0 80% / P1+P2 20%) and are covered by progress.test.ts.
 - Quarters: Q4\/2026 fronts are static in goals.ts; other quarters' fronts are user-created and persisted in the zustand store (customFronts); pages read via useFronts() for the active quarter — keeps the original plan untouched while allowing new quarters.
 - Due-date controls are shared by Goals and Report and use the same store field; PDF exports read that field so deadlines stay synchronized.
+- Store KR deadlines in the existing dueDates map by KR ID so backups and local-file sync preserve them; route deadline edits through store actions and due-policy helpers to enforce parent limits atomically.

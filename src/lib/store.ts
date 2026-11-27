@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { FRONTS, type Front } from "@/data/goals";
 import { BASE_QUARTER, sortQuarters } from "@/lib/quarters";
+import { updateGoalDue, updateKrDue } from "@/lib/due-policy";
 
 export type CustomFront = Front & { quarter: string };
 interface State {
@@ -14,7 +15,8 @@ interface State {
   quarters: string[];
   customFronts: CustomFront[];
   dueDates: Record<string, string>;
-  setDueDate: (id: string, v: string | null) => void;
+  setDueDate: (id: string, v: string | null) => boolean;
+  setKrDueDate: (frontId: string, krId: string, v: string | null, extendParent?: boolean) => boolean;
   setKr: (id: string, v: number) => void;
   setKpi: (id: string, v: number) => void;
   setNote: (id: string, v: string) => void;
@@ -26,10 +28,26 @@ interface State {
 }
 export const useGoals = create<State>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       kr: {}, kpiValue: {}, notes: {}, summary: "", summaries: {},
       activeQuarter: BASE_QUARTER, quarters: [BASE_QUARTER], customFronts: [], dueDates: {},
-      setDueDate: (id, v) => set((s) => { const d = { ...s.dueDates }; if (v) d[id] = v; else delete d[id]; return { dueDates: d }; }),
+      setDueDate: (id, v) => {
+        const s = get();
+        const front = [...FRONTS, ...s.customFronts].find((f) => f.id === id);
+        const dueDates = updateGoalDue(s.dueDates, front, id, v);
+        if (!dueDates) return false;
+        set({ dueDates });
+        return true;
+      },
+      setKrDueDate: (frontId, krId, v, extendParent = false) => {
+        const s = get();
+        const front = [...FRONTS, ...s.customFronts].find((f) => f.id === frontId);
+        if (!front) return false;
+        const dueDates = updateKrDue(s.dueDates, front, krId, v, extendParent);
+        if (!dueDates) return false;
+        set({ dueDates });
+        return true;
+      },
       setKr: (id, v) => set((s) => ({ kr: { ...s.kr, [id]: v } })),
       setKpi: (id, v) => set((s) => ({ kpiValue: { ...s.kpiValue, [id]: v } })),
       setNote: (id, v) => set((s) => ({ notes: { ...s.notes, [id]: v } })),
