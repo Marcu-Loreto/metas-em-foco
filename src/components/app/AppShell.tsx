@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { LayoutGrid, Target, Gauge, FileText, Leaf, PlusCircle, History } from "lucide-react";
 import { useGoals, useFronts } from "@/lib/store";
 import { quarterLabel } from "@/lib/quarters";
+import { LoadDataButton } from "@/components/app/load-data-button";
 
 const NAV = [
   { to: "/", label: "Dashboard", icon: LayoutGrid },
@@ -31,6 +32,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             className="rounded-full border bg-background px-3 py-1.5 text-sm font-medium">
             {quarters.map((q) => <option key={q} value={q}>{quarterLabel(q)}</option>)}
           </select>
+          <LoadDataButton />
           <nav className="ml-auto flex flex-wrap gap-1">
             {NAV.map(({ to, label, icon: Icon }) => (
               <Link key={to} to={to} activeOptions={{ exact: to === "/" }}

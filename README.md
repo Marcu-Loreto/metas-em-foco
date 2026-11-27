@@ -22,3 +22,9 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+## Histórico local
+
+O botão **Carregar dados**, disponível no topo de todas as telas, relê o histórico salvo. Se o arquivo local não estiver disponível, permite selecionar um backup JSON.
+
+Ao rodar localmente, os dados são gravados em `data/historico.json.local`, em formato JSON e fora dos commits automáticos. Projetos que já usam `data/historico.json` continuam compatíveis. Cópias preservadas são recuperadas quando o arquivo ativo não existe. Use **Histórico → Exportar dados** para guardar uma cópia ou transferir para outra máquina.

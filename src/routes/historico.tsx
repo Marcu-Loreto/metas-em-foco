@@ -5,7 +5,8 @@ import { toast } from "sonner";
 import { useGoals, frontsOf } from "@/lib/store";
 import { quarterLabel, quarterRange } from "@/lib/quarters";
 import { frontPct, overallPct, status, STATUS_LABEL } from "@/lib/progress";
-import { buildBackup, backupFileName, downloadJson, parseBackup } from "@/lib/backup";
+import { buildBackup, backupFileName, downloadJson } from "@/lib/backup";
+import { importHistoryText } from "@/lib/local-file-sync";
 import { card, PageTitle, PriorityTag, Bar } from "@/components/app/bits";
 import { Button } from "@/components/ui/button";
 import { deadlineStatus } from "@/lib/closure";
@@ -36,8 +37,7 @@ function Historico() {
 
   async function importar(file: File) {
     try {
-      const st = parseBackup(await file.text());
-      useGoals.setState(st);
+      const st = importHistoryText(await file.text());
       toast.success(
         `Histórico carregado: ${st.quarters.length} quarter${st.quarters.length > 1 ? "s" : ""}, ` +
           `${st.customFronts.length} meta${st.customFronts.length === 1 ? "" : "s"} cadastrada${st.customFronts.length === 1 ? "" : "s"}.`,

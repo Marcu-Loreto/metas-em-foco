@@ -1,11 +1,37 @@
 import { useGoals } from "@/lib/store";
 import { buildBackup, parseBackup } from "@/lib/backup";
 
-/** When the dev server exposes /__local-data, load data/historico.json and keep it updated. */
+let saveTimer: ReturnType<typeof setTimeout> | undefined;
+let loading = 0;
+let canSave = false;
+
+export function importHistoryText(text: string) {
+  const state = parseBackup(text);
+  canSave = true;
+  useGoals.setState(state);
+  return state;
+}
+
+/** Reload without letting a pending empty-browser save overwrite the file first. */
+export async function loadLocalHistory(): Promise<boolean> {
+  if (!import.meta.env.DEV) return false;
+  clearTimeout(saveTimer);
+  loading += 1;
+  try {
+    const response = await fetch("/__local-data", { cache: "no-store" });
+    if (response.status === 404) { canSave = true; return false; }
+    if (!response.ok) throw new Error("Não foi possível ler o histórico salvo. Selecione seu arquivo JSON.");
+    const state = parseBackup(await response.text());
+    canSave = true;
+    useGoals.setState(state);
+    return true;
+  } finally { loading -= 1; }
+}
+
+/** Browser hydration precedes file loading; only later edits trigger writes. */
 export function startLocalFileSync(): () => void {
-  if (!import.meta.env.DEV) return () => {};
+  canSave = false;
   let unsub = () => {};
-  let timer: ReturnType<typeof setTimeout> | undefined;
   let cancelled = false;
   const save = () =>
     fetch("/__local-data", {
@@ -14,16 +40,16 @@ export function startLocalFileSync(): () => void {
     }).catch(() => {});
   void (async () => {
     try {
-      const r = await fetch("/__local-data");
+      await useGoals.persist.rehydrate();
+      if (cancelled || !import.meta.env.DEV) return;
+      try { await loadLocalHistory(); } catch { /* Keep writes paused until recovery succeeds. */ }
       if (cancelled) return;
-      if (r.ok) useGoals.setState(parseBackup(await r.text()));
-      else if (r.status === 404) await save();
-      else return;
     } catch { return; }
     unsub = useGoals.subscribe(() => {
-      clearTimeout(timer);
-      timer = setTimeout(save, 600);
+      if (loading || cancelled || !canSave) return;
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(save, 600);
     });
   })();
-  return () => { cancelled = true; clearTimeout(timer); unsub(); };
+  return () => { cancelled = true; clearTimeout(saveTimer); unsub(); };
 }

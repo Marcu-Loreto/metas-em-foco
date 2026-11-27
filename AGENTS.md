@@ -36,3 +36,5 @@ use the editor.
 - Store KR deadlines in the existing dueDates map by KR ID so backups and local-file sync preserve them; route deadline edits through store actions and due-policy helpers to enforce parent limits atomically.
 - Keep estimated deadlines in dueDates and actual completion dates in closedDates for both goals and KRs; shared closure helpers classify outcomes without changing estimates, and backups/PDF preserve both maps.
 - New KR completion records today's local date, explicit closure completes the item, and reopening clears closure; auto-close a goal only when every KR has a known closure, using the latest one to avoid inventing historical dates.
+- Vite-only local history tooling keeps private JSON in data/historico.json.local (existing historico.json remains supported), recovers preserved copies without deleting them, and writes atomically; never move active history merely to clean Git status.
+- Hydrate browser state before loading local history, never write defaults on a missing-file startup, and pause scheduled autosaves during manual recovery; the shared header recovery control reloads the same store for every screen.
