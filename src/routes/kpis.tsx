@@ -12,6 +12,7 @@ export const Route = createFileRoute("/kpis")({
     { name: "description", content: "KPIs com fórmula, baseline, meta, frequência e responsável, e seus OKRs." },
     { property: "og:title", content: "KPIs & OKRs · Q4/2026" },
     { property: "og:description", content: "Indicadores e Key Results vinculados de cada frente." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
   ] }),
   component: Kpis,
 });

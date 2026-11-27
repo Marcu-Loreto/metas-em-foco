@@ -15,6 +15,7 @@ export const Route = createFileRoute("/")({
     { name: "description", content: "Visão geral da completude das 7 frentes, KPIs e OKRs do Q4/2026." },
     { property: "og:title", content: "Dashboard · Metas Q4/2026" },
     { property: "og:description", content: "Completude por frente, KPIs e anotações." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
   ] }),
   component: Dashboard,
 });

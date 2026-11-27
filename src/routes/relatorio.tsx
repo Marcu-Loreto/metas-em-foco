@@ -8,6 +8,7 @@ import { buildReportPdf, reportFileName } from "@/lib/report-pdf";
 import { Bar, card, PageTitle, PriorityTag, Ring, StatusPill } from "@/components/app/bits";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { DuePicker } from "@/components/app/due-date";
 
 export const Route = createFileRoute("/relatorio")({
   head: () => ({ meta: [
@@ -15,6 +16,7 @@ export const Route = createFileRoute("/relatorio")({
     { name: "description", content: "Relatório consolidado das metas, KRs, KPIs e anotações, com exportação em PDF." },
     { property: "og:title", content: "Relatório final · Q4/2026" },
     { property: "og:description", content: "Consolidação do Q4/2026 exportável em PDF." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
   ] }),
   component: Relatorio,
 });
@@ -52,14 +54,15 @@ function Relatorio() {
         {fronts.map((f) => {
           const p = frontPct(f, s.kr);
           return (
-            <section key={f.id} className={card}>
+            <section key={f.id} className={card + " min-w-0 break-words"}>
               <div className="flex flex-wrap items-center gap-3"><PriorityTag p={f.priority} /><h3 className="text-lg font-semibold">{f.name}</h3><StatusPill pct={p} /><b className="ml-auto">{p}%</b></div>
               <div className="mt-3"><Bar pct={p} /></div>
+              <DuePicker value={s.dueDates[f.id]} onChange={(value) => s.setDueDate(f.id, value)} />
               <ul className="mt-3 grid gap-1 text-sm md:grid-cols-2">
                 {f.krs.map((k, i) => <li key={k.id} className="flex justify-between gap-3"><span className={(s.kr[k.id] ?? 0) >= 100 ? "" : "text-muted-foreground"}>KR{i + 1} · {k.text}</span><span>{s.kr[k.id] ?? 0}%</span></li>)}
               </ul>
               <p className="mt-3 text-sm"><b>KPI:</b> {f.kpi.name} — {s.kpiValue[f.id] ?? 0}% · <span className="text-muted-foreground">Meta: {f.kpi.target}</span></p>
-              {s.notes[f.id] && <p className="mt-2 rounded-xl bg-muted p-3 text-sm whitespace-pre-wrap">{s.notes[f.id]}</p>}
+              {s.notes[f.id] && <p className="mt-2 rounded-xl bg-muted p-3 text-sm whitespace-pre-wrap [overflow-wrap:anywhere]">{s.notes[f.id]}</p>}
             </section>
           );
         })}

@@ -1,7 +1,8 @@
 import type { Front } from "@/data/goals";
 import { frontPct, overallPct, groupPct, status, STATUS_LABEL } from "@/lib/progress";
+import { daysLeft, daysLeftLabel } from "@/lib/due";
 
-interface Data { fronts: Front[]; quarterLabel: string; range: { start: number; end: number }; kr: Record<string, number>; kpiValue: Record<string, number>; notes: Record<string, string>; summary: string }
+interface Data { fronts: Front[]; quarterLabel: string; range: { start: number; end: number }; kr: Record<string, number>; kpiValue: Record<string, number>; notes: Record<string, string>; summary: string; dueDates: Record<string, string> }
 const LIME: [number, number, number] = [94, 128, 110];
 
 /** "Q4-2026" + 19/11/2026 -> "relatorio-q4-2026-ia-agentica-2026-11-19.pdf" */
@@ -32,14 +33,15 @@ export async function buildReportPdf(d: Data): Promise<Blob> {
   }
   const head = { fillColor: LIME, textColor: 255 } as const;
   autoTable(doc, { startY: y, headStyles: head, styles: { fontSize: 8 },
-    head: [["Prio", "Frente", "%", "Status", "KPI", "KPI %"]],
-    body: d.fronts.map((f) => { const p = frontPct(f, d.kr); return [f.priority, f.name, `${p}%`, STATUS_LABEL[status(p, new Date(), d.range)], f.kpi.name, `${d.kpiValue[f.id] ?? 0}%`]; }) });
+    head: [["Prio", "Frente", "%", "Status", "KPI", "KPI %", "Finalização"]],
+    body: d.fronts.map((f) => { const p = frontPct(f, d.kr); return [f.priority, f.name, `${p}%`, STATUS_LABEL[status(p, new Date(), d.range)], f.kpi.name, `${d.kpiValue[f.id] ?? 0}%`, reportDueDate(d.dueDates[f.id])]; }) });
   for (const f of d.fronts) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const last = (doc as any).lastAutoTable.finalY as number;
     autoTable(doc, { startY: last + 8, headStyles: head, styles: { fontSize: 8 }, columnStyles: { 0: { cellWidth: 150 } },
       head: [[`[${f.priority}] ${f.name} — ${frontPct(f, d.kr)}%`, "%"]],
       body: [
+        [`Data de finalização: ${reportDueDate(d.dueDates[f.id])}`, ""],
         ...f.krs.map((k, i) => [`KR${i + 1}: ${k.text}`, `${d.kr[k.id] ?? 0}%`]),
         [`KPI: ${f.kpi.name} · Meta: ${f.kpi.target}`, `${d.kpiValue[f.id] ?? 0}%`],
         [`Critério de conclusão: ${f.completion}`, ""],
@@ -47,4 +49,10 @@ export async function buildReportPdf(d: Data): Promise<Blob> {
       ] });
   }
   return doc.output("blob");
+}
+
+export function reportDueDate(due: string | undefined, today = new Date()): string {
+  if (!due) return "Não definida";
+  const [year, month, day] = due.split("-");
+  return `${day}/${month}/${year} · ${daysLeftLabel(daysLeft(due, today))}`;
 }
